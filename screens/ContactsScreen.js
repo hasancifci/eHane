@@ -1,64 +1,63 @@
-import React, { useEffect } from 'react';
-import { View, Text, ScrollView,StyleSheet  } from 'react-native';
-import { connect } from 'react-redux';
-import { setContacts, setLoading } from '../src/actions/contactsActions';
-import * as Contacts from 'expo-contacts';
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { setContacts, setLoading } from "../src/actions/contactsActions";
+import * as Contacts from "expo-contacts";
+import { addFavorite, setupDatabase, truncateTable } from "../db/database";
+import ListComponent from "../components/ListComponent";
 
-const ContactsScreen = ({ contacts, isLoading, setContacts, setLoading }) => {
-    useEffect(() => {
-      (async () => {
-        const { status } = await Contacts.requestPermissionsAsync();
-        if (status === 'granted') {
-          setLoading(true);
-          const { data } = await Contacts.getContactsAsync({
-            fields: [Contacts.Fields.Name],
-          });
+// Şu an eklenen datalar üzerinde testler yaptığım için kullanıyorum kaldırılmalı!
+truncateTable();
+
+setupDatabase();
+
+const ContactsScreen = ({ contacts, setContacts, setLoading }) => {
+  useEffect(() => {
+    (async () => {
+      const { status } = await Contacts.requestPermissionsAsync();
+      if (status === "granted") {
+        setLoading(true);
+        const { data } = await Contacts.getContactsAsync({
+          fields: [
+            Contacts.Fields.Name,
+            Contacts.Fields.PhoneNumbers,
+            Contacts.Fields.Emails,
+          ],
+        });
+        if (data) {
           setContacts(data);
-          setLoading(false);
+        } else {
+          setContacts([]);
         }
-      })();
-    }, []);
-  
-    return (
-      <ScrollView>
-        {contacts.map(contact => (
-          <View key={contact.id} style={styles.contactContainer}>
-            <View style={styles.contactInfo}>
-              <Text>{contact.name ?? '-'}</Text>
-            </View>
-          </View>
-        ))}
-        {isLoading && <Text>Loading...</Text>}
-      </ScrollView>
-    );
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const addToLocalDb = async (contact) => {
+    try {
+      const name = contact.name ?? "-";
+      const phoneNumber = contact.phoneNumbers?.[0]?.number ?? "-";
+      const email = contact.emails?.[0]?.email ?? "-";
+      await addFavorite(name, phoneNumber, email);
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+    }
   };
-  
-  const mapStateToProps = state => ({
-    contacts: state.contacts.contacts,
-    isLoading: state.contacts.isLoading,
-  });
-  
-  const mapDispatchToProps = {
-    setContacts,
-    setLoading,
-  };
-  
-  export default connect(mapStateToProps, mapDispatchToProps)(ContactsScreen);
-  
-  const styles = StyleSheet.create({
-    contactContainer: {
-      marginBottom: 10,
-      paddingHorizontal: 10,
-      paddingVertical: 5,
-      borderBottomWidth: 1,
-      borderBottomColor: '#ccc',
-    },
-    contactInfo: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    label: {
-      fontWeight: 'bold',
-      marginRight: 5,
-    },
-  });
+
+  return (
+    <ListComponent contacts={contacts} contactClick={addToLocalDb} />
+  );
+};
+
+const mapStateToProps = (state) => ({
+  contacts: state.contacts.contacts,
+});
+
+const mapDispatchToProps = {
+  setContacts,
+  setLoading,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactsScreen);
+
+
