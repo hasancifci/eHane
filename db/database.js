@@ -35,26 +35,31 @@ export const addFavorite = (name, phoneNumber, email) => {
   });
 };
 
-//Tablodan favoriler listesini çekiyoruz.
+//Tablodan favoriler listesini çekiyoruz
 export const getFavorites = () => {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
         tx.executeSql(
-          `SELECT * FROM favorites`
+          `SELECT * FROM favorites`,
+          [],
+          (_, { rows }) => resolve(rows._array),
+          (_, error) => reject(error)
         );
       },
     );
   });
 };
 
-//Test aşamasında tabloyu temizleme için kullanılıyor.
 export const truncateTable = () => {
     return new Promise((resolve, reject) => {
       db.transaction(
         tx => {
           tx.executeSql(
-            `DELETE FROM favorites`
+            `DELETE FROM favorites`,
+            [],
+            (_, { rows }) => resolve(rows._array),
+            (_, error) => reject(error)
           );
         },
         error => reject(error)

@@ -1,10 +1,10 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 
-const ListComponent = ({ contacts, contactClick }) => {
+const ListComponent = ({ data, contactClick }) => {
   return (
     <FlatList
-      data={contacts}
+      data={data}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <TouchableOpacity

@@ -45,7 +45,7 @@ const ContactsScreen = ({ contacts, setContacts, setLoading }) => {
   };
 
   return (
-    <ListComponent contacts={contacts} contactClick={addToLocalDb} />
+    <ListComponent data={contacts} contactClick={addToLocalDb} />
   );
 };
 
