@@ -44,7 +44,7 @@ const App = () => {
 function StacNavigator(){
   return(
     <Stack.Navigator>
-      <Stack.Screen name = 'Favoriler' options={{headerShown:false}} component={FavoritesScreen}/>
+      <Stack.Screen name = 'Favori' options={{headerShown:false}} component={FavoritesScreen}/>
       <Stack.Screen name = 'Detaylar'  component={DetailScreen}/>
     </Stack.Navigator>
   )

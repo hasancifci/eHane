@@ -4,6 +4,8 @@ import { setContacts, setLoading } from "../src/actions/contactsActions";
 import * as Contacts from "expo-contacts";
 import { addFavorite, setupDatabase, truncateTable, getFavorites } from "../db/database";
 import ListComponent from "../components/ListComponent";
+import { useFocusEffect } from "@react-navigation/native";
+
 
 
 // Şu an eklenen datalar üzerinde testler yaptığım için kullanıyorum kaldırılmalı!
@@ -40,6 +42,22 @@ const ContactsScreen = ({ contacts, setContacts, setLoading }) => {
     getFavorites().then(favorites => setFavorites(favorites));
   }, []);
 
+  //Burada favorilerden nesne kaldırıp kişiler sayfasına geldiğimizde etkilenenleri görebilmek için favori listesini load ediyoruz.
+  useFocusEffect(
+    React.useCallback(() => {
+      loadFavorites();
+    }, [])
+  );
+
+  const loadFavorites = () => {
+    getFavorites()
+      .then((favorites) => {
+        setFavorites(favorites || []);
+      })
+      .catch((error) => {
+        console.error("Error getting favorites:", error);
+      });
+  };
 
   const addToLocalDb = async (contact) => {
     try {

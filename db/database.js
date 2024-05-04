@@ -25,7 +25,7 @@ export const addFavorite = (name, phoneNumber, email) => {
             if (rowsAffected > 0) {
               resolve();
             } else {
-              reject(new Error('Failed to add favorite'));
+              reject(new Error('Failed added'));
             }
           }
         );
@@ -48,6 +48,28 @@ export const getFavorites = () => {
         );
       },
     );
+  });
+};
+
+//Tablodan favori silme işlemi.
+export const removeFavorite = async (id) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'DELETE FROM favorites WHERE id = ?',
+        [id],
+        (_, { rowsAffected }) => {
+          if (rowsAffected > 0) {
+            resolve();
+          } else {
+            reject(new Error("Failed delete"));
+          }
+        },
+        (_, error) => {
+          reject(error);
+        }
+      );
+    });
   });
 };
 
