@@ -1,16 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { setContacts, setLoading } from "../src/actions/contactsActions";
 import * as Contacts from "expo-contacts";
-import { addFavorite, setupDatabase, truncateTable } from "../db/database";
+import { addFavorite, setupDatabase, truncateTable, getFavorites } from "../db/database";
 import ListComponent from "../components/ListComponent";
 
+
 // Şu an eklenen datalar üzerinde testler yaptığım için kullanıyorum kaldırılmalı!
-truncateTable();
+//truncateTable();
 
 setupDatabase();
 
 const ContactsScreen = ({ contacts, setContacts, setLoading }) => {
+  const [favorites, setFavorites] = useState([]);
+
   useEffect(() => {
     (async () => {
       const { status } = await Contacts.requestPermissionsAsync();
@@ -33,19 +36,30 @@ const ContactsScreen = ({ contacts, setContacts, setLoading }) => {
     })();
   }, []);
 
+  useEffect(() => {
+    getFavorites().then(favorites => setFavorites(favorites));
+  }, []);
+
+
   const addToLocalDb = async (contact) => {
     try {
       const name = contact.name ?? "-";
       const phoneNumber = contact.phoneNumbers?.[0]?.number ?? "-";
       const email = contact.emails?.[0]?.email ?? "-";
-      await addFavorite(name, phoneNumber, email);
+
+      // Eğer favoride yoksa ekle
+      if (!favorites.some(fav => fav.name === name && fav.phoneNumber === phoneNumber && fav.email === email)) {
+        console.log("Bura çalıştı")
+        await addFavorite(name, phoneNumber, email);
+        setFavorites([...favorites, { name, phoneNumber, email }]);
+      }
     } catch (error) {
       console.error("Error adding favorite:", error);
     }
   };
 
   return (
-    <ListComponent data={contacts} contactClick={addToLocalDb} />
+    <ListComponent data={contacts} contactClick={addToLocalDb} favorites={favorites} />
   );
 };
 
@@ -59,5 +73,3 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactsScreen);
-
-

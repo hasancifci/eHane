@@ -10,13 +10,12 @@ const FavoritesScreen = () => {
   const loadFavorites = () => {
     getFavorites()
       .then(favorites => {
-        setFavorites(favorites);
+        setFavorites(favorites || []);
       })
       .catch(error => {
         console.error('Error getting favorites:', error);
       });
   };
-
   
   useFocusEffect(
     React.useCallback(() => {
@@ -30,7 +29,7 @@ const FavoritesScreen = () => {
 
   return (
     <View>
-      <ListComponent data={favorites} contactClick={goToDetail}/>
+      <ListComponent data={favorites} contactClick={goToDetail} favorites={favorites}/>
     </View>
   );
 };
