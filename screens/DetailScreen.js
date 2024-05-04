@@ -1,10 +1,14 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React from "react";
+import { View, Text,Button } from "react-native";
 
-const DetailScreen = () => {
+const DetailScreen = ({ route }) => {
+  const { item } = route.params;
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Detay Sayfası</Text>
+    <View>
+      <Text>Ad Soyad : {item.name}</Text>
+      <Text>Telefon : {item.phoneNumber}</Text>
+      <Text>Email : {item.email}</Text>
     </View>
   );
 };

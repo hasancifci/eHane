@@ -24,8 +24,8 @@ const FavoritesScreen = () => {
     }, [])
   );
 
-  const goToDetail = async () => {
-    navigation.navigate("Detaylar");
+  const goToDetail = (item) => {
+    navigation.navigate("Detaylar", { item });
   };
 
   return (
