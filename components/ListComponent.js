@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
   },
   contactInfo: {
+    height:30,
     flexDirection: "row",
     alignItems: "center",
   },

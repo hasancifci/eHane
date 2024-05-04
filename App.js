@@ -4,10 +4,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import ContactsScreen from './screens/ContactsScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
-import { Provider } from 'react-redux'; // Redux'un Provider bileşenini içe aktarın
-import store from './src/store/store'; // Redux store'u burada içe aktarın
+import { Provider } from 'react-redux';
+import store from './src/store/store'; 
+import { createStackNavigator } from '@react-navigation/stack';
+import DetailScreen from './screens/DetailScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 const App = () => {
   return (
@@ -25,7 +28,7 @@ const App = () => {
           />
           <Tab.Screen
             name="Favoriler"
-            component={FavoritesScreen}
+            component={StacNavigator}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="star-outline" color={color} size={size} />
@@ -37,5 +40,15 @@ const App = () => {
     </Provider>
   );
 };
+
+function StacNavigator(){
+  return(
+    <Stack.Navigator>
+      <Stack.Screen name = 'Favoriler' options={{headerShown:false}} component={FavoritesScreen}/>
+      <Stack.Screen name = 'Detaylar'  component={DetailScreen}/>
+    </Stack.Navigator>
+  )
+}
+
 
 export default App;
